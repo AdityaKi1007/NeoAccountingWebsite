@@ -1,0 +1,722 @@
+<!--HEAD-->
+<title>NeoAccounting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* ---------- Reset (self-sufficient, doesn't rely on host reset) ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  h1, h2, h3, h4, p, figure, blockquote { margin: 0; }
+  ul, ol { margin: 0; padding: 0; list-style: none; }
+  img, svg { display: block; max-width: 100%; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  a { color: inherit; }
+
+  /* ---------- Tokens ---------- */
+  :root {
+    --ink: #12202e;
+    --ink-soft: #2b3d4a;
+    --paper: #f4f6f3;
+    --surface: #ffffff;
+    --accent: #1f6f63;
+    --accent-ink: #ffffff;
+    --accent-2: #b8873d;
+    --muted: #5b6b73;
+    --border: #e2e6e1;
+    --shadow: 0 1px 2px rgba(18, 32, 46, 0.04), 0 8px 24px rgba(18, 32, 46, 0.06);
+    --radius: 14px;
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #edefea;
+      --ink-soft: #c4ccd1;
+      --paper: #0e1720;
+      --surface: #16212b;
+      --accent: #45ab9b;
+      --accent-ink: #06221d;
+      --accent-2: #d3a05e;
+      --muted: #93a2aa;
+      --border: #263139;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #edefea;
+    --ink-soft: #c4ccd1;
+    --paper: #0e1720;
+    --surface: #16212b;
+    --accent: #45ab9b;
+    --accent-ink: #06221d;
+    --accent-2: #d3a05e;
+    --muted: #93a2aa;
+    --border: #263139;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+  html { scroll-behavior: smooth; }
+
+  .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding-inline: 20px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  h1, h2, h3 { font-family: var(--serif); text-wrap: balance; color: var(--ink); font-weight: 600; }
+  h1 { font-size: clamp(2rem, 1.4rem + 2.6vw, 3.4rem); line-height: 1.06; letter-spacing: -0.01em; }
+  h2 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.2rem); line-height: 1.14; }
+  h3 { font-size: 1.15rem; line-height: 1.3; }
+  p { color: var(--ink-soft); max-width: 65ch; }
+  .lede { font-size: 1.1rem; color: var(--ink-soft); }
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--sans); font-weight: 600; font-size: 0.95rem;
+    padding: 12px 22px; border-radius: 999px; border: 1px solid transparent;
+    cursor: pointer; text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
+  }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--border); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-block { width: 100%; }
+  .btn[disabled] { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+  /* ---------- Header ---------- */
+  header.site {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+  .brand { display: flex; align-items: center; gap: 9px; font-family: var(--serif); font-weight: 600; font-size: 1.2rem; text-decoration: none; }
+  .brand-mark { width: 26px; height: 26px; flex: none; }
+  .nav-links { display: flex; align-items: center; gap: 28px; font-size: 0.92rem; font-weight: 500; }
+  .nav-links a:not(.btn) { text-decoration: none; color: var(--ink-soft); }
+  .nav-links a:not(.btn):hover { color: var(--accent); }
+  .nav-actions { display: flex; align-items: center; gap: 10px; }
+  .nav-links-wrap { display: flex; align-items: center; gap: 28px; }
+  @media (max-width: 760px) {
+    .nav-links { display: none; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero { padding-block: 64px 56px; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } }
+  .hero-copy .eyebrow { margin-bottom: 14px; }
+  .hero-copy h1 { margin-bottom: 18px; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .hero-stats { display: flex; gap: 28px; margin-top: 34px; flex-wrap: wrap; }
+  .hero-stat b { display: block; font-family: var(--mono); font-size: 1.3rem; color: var(--ink); }
+  .hero-stat span { font-size: 0.82rem; color: var(--muted); }
+
+  .ledger-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 22px;
+  }
+  .ledger-card .cap { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: block; }
+  .ledger-row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px dashed var(--border); font-family: var(--mono); font-size: 0.87rem; }
+  .ledger-row:last-of-type { border-bottom: none; }
+  .ledger-row .nm { color: var(--ink-soft); }
+  .ledger-row .amt { color: var(--ink); font-weight: 500; }
+  .ledger-total { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 2px solid var(--ink); font-family: var(--mono); font-weight: 600; }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 60px; }
+  .section-head { max-width: 640px; margin-bottom: 34px; }
+  .section-head .eyebrow { margin-bottom: 10px; }
+  .section-head p { margin-top: 12px; }
+
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  @media (max-width: 900px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 22px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .card .ico { width: 34px; height: 34px; color: var(--accent); }
+  .card h3 { margin-top: 2px; }
+  .card p { font-size: 0.93rem; }
+
+  .diff-item { display: flex; gap: 14px; padding: 18px 0; border-top: 1px solid var(--border); }
+  .diff-item:first-child { border-top: none; }
+  .diff-num { font-family: var(--mono); color: var(--accent-2); font-weight: 600; font-size: 0.85rem; flex: none; width: 26px; padding-top: 3px; }
+  .diff-body h3 { margin-bottom: 4px; font-size: 1.05rem; }
+  .diff-body p { font-size: 0.93rem; }
+
+  .band { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .hier-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  @media (max-width: 860px) { .hier-wrap { grid-template-columns: 1fr; } }
+  .hier-diagram { background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: step; }
+  @media (max-width: 900px) { .steps { grid-template-columns: 1fr; } }
+  .step { position: relative; padding: 4px 18px 4px 0; border-left: 2px solid var(--border); padding-left: 20px; }
+  .step:first-child { }
+  @media (max-width: 900px) { .step { border-left: none; border-top: 2px solid var(--border); padding-left: 0; padding-top: 20px; } .step:first-child { border-top: none; } }
+  .step-num { font-family: var(--mono); font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+  .step h3 { margin: 8px 0 6px; font-size: 1.05rem; }
+  .step p { font-size: 0.9rem; }
+
+  /* ---------- Signup ---------- */
+  .signup-wrap { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 44px; align-items: start; }
+  @media (max-width: 900px) { .signup-wrap { grid-template-columns: 1fr; } }
+  .signup-panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 28px; box-shadow: var(--shadow);
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field label { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+  .field .hint { font-size: 0.78rem; color: var(--muted); font-weight: 400; }
+  .field input, .field select, .field textarea {
+    background: var(--paper); border: 1px solid var(--border); border-radius: 9px;
+    padding: 11px 13px; font-size: 0.95rem; color: var(--ink); width: 100%;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent);
+  }
+  .field textarea { resize: vertical; min-height: 88px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
+  .field-error { font-size: 0.78rem; color: #b3452f; display: none; }
+  .field.has-error input, .field.has-error select, .field.has-error textarea { border-color: #b3452f; }
+  .field.has-error .field-error { display: block; }
+  .privacy-note { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+  .hp { position: absolute; left: -9999px; top: -9999px; }
+
+  .form-status { border-radius: 10px; padding: 14px 16px; font-size: 0.9rem; margin-top: 16px; display: none; }
+  .form-status.show { display: block; }
+  .form-status.ok { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); border: 1px solid var(--accent); color: var(--ink); }
+  .form-status.warn { background: color-mix(in srgb, var(--accent-2) 16%, var(--surface)); border: 1px solid var(--accent-2); color: var(--ink); }
+  .form-status a.mailto-fallback { color: var(--accent); font-weight: 600; }
+
+  footer.site { border-top: 1px solid var(--border); padding-block: 40px; margin-top: 20px; }
+  .foot-grid { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+  .foot-brand p { font-size: 0.88rem; max-width: 42ch; margin-top: 10px; }
+  .foot-links { display: flex; gap: 36px; flex-wrap: wrap; }
+  .foot-links h4 { font-family: var(--sans); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; }
+  .foot-links a { display: block; font-size: 0.88rem; color: var(--ink-soft); text-decoration: none; padding: 4px 0; }
+  .foot-links a:hover { color: var(--accent); }
+  .foot-bottom { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
+</style>
+<!--BODY-->
+<header class="site">
+  <div class="wrap nav-row">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="24" height="24" rx="7" fill="var(--accent)"></rect>
+        <path d="M7 17.5V9.2L13 15.2L19 8.6V17" stroke="var(--accent-ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+      </svg>
+      NeoAccounting
+    </a>
+    <div class="nav-links-wrap">
+      <nav class="nav-links">
+        <a href="#solutions">Product</a>
+        <a href="#structure">Built for real estate</a>
+        <a href="#why">Why NeoAccounting</a>
+        <a href="#how">How it works</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="btn btn-ghost" href="https://accounting.propcrm.app/">Sign in</a>
+        <a class="btn btn-primary" href="#signup">Get started</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Accounting for real estate teams</p>
+        <h1>The ledger for how real estate businesses actually work.</h1>
+        <p class="lede">Invoicing, bills, banking, and financial reporting — tracked down to the project and unit, not just the account. Built for developers, brokers, and property teams who need their books to match their business.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#signup">Create your account</a>
+          <a class="btn btn-ghost" href="https://accounting.propcrm.app/">Sign in</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><b class="tabular">10+</b><span>Financial reports, real time</span></div>
+          <div class="hero-stat"><b class="tabular">1</b><span>Ledger, unlimited projects</span></div>
+          <div class="hero-stat"><b class="tabular">API</b><span>Open REST integration</span></div>
+        </div>
+      </div>
+      <div class="ledger-card" aria-hidden="true">
+        <span class="cap">Deferred revenue — as of today</span>
+        <div class="ledger-row"><span class="nm">Marina Heights, Unit 14B</span><span class="amt tabular">4,200.00</span></div>
+        <div class="ledger-row"><span class="nm">Marina Heights, Unit 09A</span><span class="amt tabular">3,150.00</span></div>
+        <div class="ledger-row"><span class="nm">Palm Court, Unit 02</span><span class="amt tabular">2,875.00</span></div>
+        <div class="ledger-row"><span class="nm">Palm Court, Unit 05</span><span class="amt tabular">1,960.00</span></div>
+        <div class="ledger-total"><span>Total deferred</span><span class="tabular">12,185.00</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="solutions">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Solutions</p>
+        <h2>Everything between a quote and a closed month.</h2>
+        <p>Four modules that share one chart of accounts, so nothing needs reconciling against itself.</p>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="M9 12h7M9 16h7M9 8h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+          <h3>Invoicing &amp; Receivables</h3>
+          <p>Quotes, sales orders, and invoices with automatic AR aging, partial payments, and credit notes.</p>
+        </div>
+        <div class="card">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 8h18M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <h3>Bills &amp; Payables</h3>
+          <p>Vendor bills and payments with per-line GL coding, vendor credits, and full AP visibility.</p>
+        </div>
+        <div class="card">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.6"></rect><path d="M3 10h18M7 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+          <h3>Banking &amp; Reconciliation</h3>
+          <p>Connect bank and card accounts, record transfers, and keep every account tied to the ledger.</p>
+        </div>
+        <div class="card">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V5M4 19h16M8 19v-6m4.5 6V9M17 19v-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <h3>Financial Reporting</h3>
+          <p>P&amp;L, Balance Sheet, Cash Flow, Trial Balance, and General Ledger, generated in real time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="structure" class="band">
+    <div class="wrap hier-wrap">
+      <div>
+        <p class="eyebrow">Built for real estate</p>
+        <h2>Your chart of accounts should know what a unit is.</h2>
+        <p style="margin-top: 14px;">Most accounting software treats a project as a tag. NeoAccounting treats it as structure: every organization can carry multiple legal entities, each legal entity its own projects, each project its buildings, each building its units — and every invoice, bill, and journal line can be traced straight down to one.</p>
+        <p style="margin-top: 12px;">That's also where revenue recognition lives: tag an invoice line with a service period and NeoAccounting spreads the income across it automatically, with a Deferred Revenue report that always matches the ledger.</p>
+      </div>
+      <div class="hier-diagram">
+        <svg viewBox="0 0 460 300" width="100%" role="img" aria-label="Hierarchy: Organization contains Legal Entities, which contain Projects, which contain Buildings, which contain Units">
+          <g font-family="IBM Plex Mono, monospace" font-size="12.5">
+            <rect x="150" y="6" width="160" height="34" rx="8" fill="var(--accent)"></rect>
+            <text x="230" y="27" text-anchor="middle" fill="var(--accent-ink)">Organization</text>
+
+            <line x1="230" y1="40" x2="230" y2="58" stroke="var(--border)" stroke-width="1.5"></line>
+            <line x1="70" y1="58" x2="390" y2="58" stroke="var(--border)" stroke-width="1.5"></line>
+            <line x1="70" y1="58" x2="70" y2="72" stroke="var(--border)" stroke-width="1.5"></line>
+            <line x1="390" y1="58" x2="390" y2="72" stroke="var(--border)" stroke-width="1.5"></line>
+
+            <rect x="10" y="72" width="120" height="30" rx="7" fill="var(--surface)" stroke="var(--border)"></rect>
+            <text x="70" y="91" text-anchor="middle" fill="var(--ink)">Legal Entity A</text>
+            <rect x="330" y="72" width="120" height="30" rx="7" fill="var(--surface)" stroke="var(--border)"></rect>
+            <text x="390" y="91" text-anchor="middle" fill="var(--ink)">Legal Entity B</text>
+
+            <line x1="70" y1="102" x2="70" y2="120" stroke="var(--border)" stroke-width="1.5"></line>
+            <rect x="10" y="120" width="120" height="30" rx="7" fill="var(--surface)" stroke="var(--border)"></rect>
+            <text x="70" y="139" text-anchor="middle" fill="var(--ink)" font-size="11.5">Project: Marina Hts</text>
+
+            <line x1="70" y1="150" x2="70" y2="168" stroke="var(--border)" stroke-width="1.5"></line>
+            <line x1="50" y1="168" x2="130" y2="168" stroke="var(--border)" stroke-width="1.5"></line>
+            <line x1="50" y1="168" x2="50" y2="182" stroke="var(--border)" stroke-width="1.5"></line>
+            <line x1="130" y1="168" x2="130" y2="182" stroke="var(--border)" stroke-width="1.5"></line>
+
+            <rect x="12" y="182" width="76" height="28" rx="6" fill="var(--paper)" stroke="var(--border)"></rect>
+            <text x="50" y="200" text-anchor="middle" fill="var(--ink-soft)" font-size="11">Building 1</text>
+            <rect x="92" y="182" width="76" height="28" rx="6" fill="var(--paper)" stroke="var(--border)"></rect>
+            <text x="130" y="200" text-anchor="middle" fill="var(--ink-soft)" font-size="11">Building 2</text>
+
+            <line x1="50" y1="210" x2="50" y2="224" stroke="var(--border)" stroke-width="1.5"></line>
+            <rect x="12" y="224" width="76" height="26" rx="6" fill="var(--surface)" stroke="var(--accent-2)"></rect>
+            <text x="50" y="241" text-anchor="middle" fill="var(--ink)" font-size="10.5">Unit 14B</text>
+
+            <line x1="130" y1="210" x2="130" y2="224" stroke="var(--border)" stroke-width="1.5"></line>
+            <rect x="92" y="224" width="76" height="26" rx="6" fill="var(--surface)" stroke="var(--accent-2)"></rect>
+            <text x="130" y="241" text-anchor="middle" fill="var(--ink)" font-size="10.5">Unit 09A</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Why NeoAccounting</p>
+        <h2>Six things a generic ledger doesn't do.</h2>
+      </div>
+      <div class="grid-2" style="row-gap: 0;">
+        <div>
+          <div class="diff-item">
+            <span class="diff-num">01</span>
+            <div class="diff-body"><h3>Project &amp; unit-level accounting</h3><p>Structure your chart of accounts around Projects, Buildings, and Units — not just cost-center tags.</p></div>
+          </div>
+          <div class="diff-item">
+            <span class="diff-num">02</span>
+            <div class="diff-body"><h3>Revenue recognition, built in</h3><p>Recognize income on a straight-line schedule across a service period, with deferred revenue reporting out of the box.</p></div>
+          </div>
+          <div class="diff-item">
+            <span class="diff-num">03</span>
+            <div class="diff-body"><h3>Multi-entity from day one</h3><p>Run more than one legal entity from a single account, each keeping its own books.</p></div>
+          </div>
+        </div>
+        <div>
+          <div class="diff-item">
+            <span class="diff-num">04</span>
+            <div class="diff-body"><h3>Role-based access, per module</h3><p>Give a bookkeeper write access to bills and read-only access to reports — without a spreadsheet of exceptions.</p></div>
+          </div>
+          <div class="diff-item">
+            <span class="diff-num">05</span>
+            <div class="diff-body"><h3>Every change, logged</h3><p>A full audit trail on every document and every record, for when someone asks who changed what.</p></div>
+          </div>
+          <div class="diff-item">
+            <span class="diff-num">06</span>
+            <div class="diff-body"><h3>An API, not just an export</h3><p>Connect invoices, receipts, vendors, and credit memos to the rest of your stack over a documented REST API.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2>From signup to a closed month.</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-num">01</span><h3>Create your account</h3><p>Tell us about your company and get provisioned in minutes.</p></div>
+        <div class="step"><span class="step-num">02</span><h3>Set up your chart of accounts</h3><p>Start from sensible defaults, or bring your own.</p></div>
+        <div class="step"><span class="step-num">03</span><h3>Invoice, bill, and reconcile</h3><p>Run day-to-day operations from one place.</p></div>
+        <div class="step"><span class="step-num">04</span><h3>Close with confidence</h3><p>Real-time reports mean no surprises at month-end.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="signup">
+    <div class="wrap signup-wrap">
+      <div>
+        <p class="eyebrow">Get started</p>
+        <h2>Tell us about your company.</h2>
+        <p style="margin-top: 14px;">Share a few details and our team will set up your organization and reach out to get you started. If you already have an account, <a href="https://accounting.propcrm.app/" style="color: var(--accent); font-weight: 600;">sign in here</a> instead.</p>
+      </div>
+      <div class="signup-panel">
+        <form id="signup-form" novalidate>
+          <div class="hp" aria-hidden="true">
+            <label for="fld-company-site">Leave this field empty</label>
+            <input type="text" id="fld-company-site" name="company_site" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="row-2">
+            <div class="field" id="field-first">
+              <label for="fld-first">First name</label>
+              <input type="text" id="fld-first" name="firstName" autocomplete="given-name" required>
+              <span class="field-error">Please enter your first name.</span>
+            </div>
+            <div class="field" id="field-last">
+              <label for="fld-last">Last name</label>
+              <input type="text" id="fld-last" name="lastName" autocomplete="family-name" required>
+              <span class="field-error">Please enter your last name.</span>
+            </div>
+          </div>
+          <div class="field" id="field-company">
+            <label for="fld-company">Company name</label>
+            <input type="text" id="fld-company" name="companyName" autocomplete="organization" required>
+            <span class="field-error">Please enter your company name.</span>
+          </div>
+          <div class="row-2">
+            <div class="field" id="field-industry">
+              <label for="fld-industry">Industry</label>
+              <select id="fld-industry" name="industry" required>
+                <option value="" disabled selected>Select one</option>
+                <option>Real Estate Development</option>
+                <option>Real Estate Brokerage</option>
+                <option>Property Management</option>
+                <option>Construction &amp; Contracting</option>
+                <option>Retail &amp; E-commerce</option>
+                <option>Professional Services</option>
+                <option>Hospitality</option>
+                <option>Other</option>
+              </select>
+              <span class="field-error">Please select an industry.</span>
+            </div>
+            <div class="field" id="field-mobile">
+              <label for="fld-mobile">Mobile number</label>
+              <input type="tel" id="fld-mobile" name="mobile" autocomplete="tel" required>
+              <span class="field-error">Please enter a mobile number.</span>
+            </div>
+          </div>
+          <div class="field" id="field-email">
+            <label for="fld-email">Work email</label>
+            <input type="email" id="fld-email" name="email" autocomplete="email" required>
+            <span class="field-error">Please enter a valid email address.</span>
+          </div>
+          <div class="field" id="field-description">
+            <label for="fld-description">About your business <span class="hint">— optional</span></label>
+            <textarea id="fld-description" name="description" placeholder="A few sentences on your company and what you'd like to manage in NeoAccounting."></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit" id="fld-submit">Create your account</button>
+          <p class="privacy-note">We'll only use these details to set up your NeoAccounting organization and get in touch. No spam.</p>
+          <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top">
+          <svg class="brand-mark" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="24" height="24" rx="7" fill="var(--accent)"></rect>
+            <path d="M7 17.5V9.2L13 15.2L19 8.6V17" stroke="var(--accent-ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+          </svg>
+          NeoAccounting
+        </a>
+        <p>Accounting infrastructure for real estate businesses — invoicing, bills, banking, and reporting, tracked down to the project and unit.</p>
+      </div>
+      <div class="foot-links">
+        <div>
+          <h4>Product</h4>
+          <a href="#solutions">Solutions</a>
+          <a href="#structure">Built for real estate</a>
+          <a href="#why">Why NeoAccounting</a>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <a href="https://accounting.propcrm.app/">Sign in</a>
+          <a href="#signup">Create account</a>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <a href="mailto:info@neoprop.ai">info@neoprop.ai</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">&copy; <span id="foot-year"></span> NeoAccounting. All rights reserved.</div>
+  </div>
+</footer>
+
+<script id="signups-data" type="application/json">@@SIGNUPS_JSON@@</script>
+<script id="page-template" type="text/plain">@@TEMPLATE_TEXT@@</script>
+
+<script>
+(function () {
+  "use strict";
+
+  document.getElementById("foot-year").textContent = new Date().getFullYear();
+
+  var SIGNUP_COLLECTION_NOTE = "signups"; // conceptual name; data lives in #signups-data
+
+  function readSignups() {
+    try {
+      var raw = document.getElementById("signups-data").textContent || "[]";
+      var parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function uid() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+  }
+
+  // ---- Two-placeholder self-publish template (see build notes) ----
+  // #page-template holds this document's own static skeleton (title/style/
+  // body, with literal tokens @@SIGNUPS_JSON@@ and @@TEMPLATE_TEXT@@ still
+  // unresolved), with every real closing-script delimiter inside it swapped
+  // for an escaped form so the skeleton can live inside a non-executing
+  // <script type="text/plain"> wrapper without ending it early.
+  //
+  // The delimiter strings below are assembled via concatenation on purpose:
+  // this whole file is, at some point, copied verbatim into that wrapper, so
+  // if the delimiter text appeared contiguously anywhere in this file's own
+  // source (including in a comment), the escape/unescape logic could not
+  // tell a "real" occurrence apart from this code describing itself, and
+  // would corrupt this very file when it re-embeds a copy of itself.
+  var TAG_CLOSE = "<" + "/" + "script";
+  var TAG_CLOSE_ESCAPED = "<" + "\\" + "/" + "script";
+
+  function escapeCloseTags(text) {
+    var re = new RegExp(TAG_CLOSE, "gi"); // case-insensitive: casing doesn't stop a browser from treating it as a real closing delimiter
+    return text.replace(re, function () { return TAG_CLOSE_ESCAPED; });
+  }
+  function unescapeCloseTags(text) {
+    return text.split(TAG_CLOSE_ESCAPED).join(TAG_CLOSE);
+  }
+
+  function buildFullPage(signups) {
+    var tplEl = document.getElementById("page-template");
+    // Un-escape the stored skeleton to get the real, publishable document
+    // (still containing both @@...@@ tokens, unresolved).
+    var skeleton = unescapeCloseTags(tplEl.textContent);
+    // Escape any closing-script delimiter that might appear inside
+    // user-submitted text so the JSON blob can't break out of its element.
+    var jsonStr = escapeCloseTags(JSON.stringify(signups));
+    // Re-escape the (still-unresolved) skeleton to store back into the
+    // template slot for the next visitor's submission.
+    var reEscapedForTemplate = escapeCloseTags(skeleton);
+    var html = skeleton.replace("@@SIGNUPS_JSON@@", function () { return jsonStr; });
+    html = html.replace("@@TEMPLATE_TEXT@@", function () { return reEscapedForTemplate; });
+    return html;
+  }
+
+  // ---------- Validation ----------
+  var form = document.getElementById("signup-form");
+  var statusEl = document.getElementById("form-status");
+  var submitBtn = document.getElementById("fld-submit");
+
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function setFieldError(fieldId, show) {
+    var el = document.getElementById(fieldId);
+    if (!el) return;
+    el.classList.toggle("has-error", !!show);
+  }
+
+  function validate(data) {
+    var errors = {};
+    if (!data.firstName.trim()) errors["field-first"] = true;
+    if (!data.lastName.trim()) errors["field-last"] = true;
+    if (!data.companyName.trim()) errors["field-company"] = true;
+    if (!data.industry.trim()) errors["field-industry"] = true;
+    if (!data.mobile.trim()) errors["field-mobile"] = true;
+    if (!data.email.trim() || !EMAIL_RE.test(data.email.trim())) errors["field-email"] = true;
+    return errors;
+  }
+
+  function showStatus(kind, html) {
+    statusEl.className = "form-status show " + kind;
+    statusEl.innerHTML = html;
+  }
+
+  function mailtoLink(data) {
+    var subject = "NeoAccounting signup: " + data.companyName;
+    var bodyLines = [
+      "New NeoAccounting signup",
+      "",
+      "First name: " + data.firstName,
+      "Last name: " + data.lastName,
+      "Company: " + data.companyName,
+      "Industry: " + data.industry,
+      "Mobile: " + data.mobile,
+      "Email: " + data.email,
+      "About: " + (data.description || "-"),
+    ];
+    return "mailto:info@neoprop.ai?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(bodyLines.join("\n"));
+  }
+
+  function showFallback(data) {
+    showStatus(
+      "warn",
+      "We couldn't save this automatically. Please send it to us directly and we'll take it from there: " +
+        '<a class="mailto-fallback" href="' + mailtoLink(data) + '">Email info@neoprop.ai</a>'
+    );
+  }
+
+  // Restore a "thanks" banner after this view reloads from a successful publish.
+  (function restoreThanks() {
+    try {
+      var flag = sessionStorage.getItem("neoacct_justSignedUp");
+      if (flag) {
+        sessionStorage.removeItem("neoacct_justSignedUp");
+        showStatus("ok", "Thanks — we've received your details and will be in touch shortly.");
+      }
+    } catch (e) { /* sessionStorage unavailable; ignore */ }
+  })();
+
+  form.addEventListener("submit", function (evt) {
+    evt.preventDefault();
+
+    // Honeypot: if a bot filled the hidden field, silently no-op.
+    var hp = document.getElementById("fld-company-site");
+    if (hp && hp.value) return;
+
+    var data = {
+      firstName: document.getElementById("fld-first").value,
+      lastName: document.getElementById("fld-last").value,
+      companyName: document.getElementById("fld-company").value,
+      industry: document.getElementById("fld-industry").value,
+      mobile: document.getElementById("fld-mobile").value,
+      email: document.getElementById("fld-email").value,
+      description: document.getElementById("fld-description").value,
+    };
+
+    ["field-first", "field-last", "field-company", "field-industry", "field-mobile", "field-email"].forEach(function (id) {
+      setFieldError(id, false);
+    });
+    var errors = validate(data);
+    if (Object.keys(errors).length) {
+      Object.keys(errors).forEach(function (id) { setFieldError(id, true); });
+      var firstBad = document.querySelector(".has-error input, .has-error select");
+      if (firstBad) firstBad.focus();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting…";
+
+    var entry = {
+      id: uid(),
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
+      companyName: data.companyName.trim(),
+      industry: data.industry,
+      mobile: data.mobile.trim(),
+      email: data.email.trim(),
+      description: data.description.trim(),
+      submittedAt: new Date().toISOString(),
+      emailed: false,
+    };
+
+    (async function () {
+      try {
+        var artifact = (window.claude && window.claude.use) ? await window.claude.use("artifact") : null;
+        if (!artifact) {
+          showFallback(data);
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Create your account";
+          return;
+        }
+        var current = readSignups();
+        current.push(entry);
+        var html = buildFullPage(current);
+        try {
+          sessionStorage.setItem("neoacct_justSignedUp", "1");
+        } catch (e) { /* ignore */ }
+        await artifact.publish(html);
+        // On success this view reloads automatically; nothing further to do here.
+      } catch (err) {
+        try { sessionStorage.removeItem("neoacct_justSignedUp"); } catch (e) {}
+        showFallback(data);
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Create your account";
+      }
+    })();
+  });
+})();
+</script>

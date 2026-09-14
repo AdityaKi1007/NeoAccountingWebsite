@@ -1,0 +1,16 @@
+version: 1
+frontend:
+  phases:
+    build:
+      commands:
+        - python3 build.py
+        - cp full-doc-preview.html index.html
+  artifacts:
+    baseDirectory: /
+    # Explicit allowlist, not a wildcard: README.md / build.py / page.html /
+    # artifact-file.html / screenshots / test scripts must never be publicly
+    # served from the live site.
+    files:
+      - 'index.html'
+  cache:
+    paths: []

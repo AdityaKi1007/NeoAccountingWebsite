@@ -14,16 +14,28 @@
 
   /* ---------- Tokens ---------- */
   :root {
-    --ink: #12202e;
-    --ink-soft: #2b3d4a;
-    --paper: #f4f6f3;
-    --surface: #ffffff;
-    --accent: #1f6f63;
-    --accent-ink: #ffffff;
-    --accent-2: #b8873d;
-    --muted: #5b6b73;
-    --border: #e2e6e1;
-    --shadow: 0 1px 2px rgba(18, 32, 46, 0.04), 0 8px 24px rgba(18, 32, 46, 0.06);
+    /* NeoProp brand palette. Values marked (brand) are exact; the rest are
+       derived from them for states, depth and contrast. */
+    --ink: #102333;          /* (brand) dark text */
+    --ink-soft: #33475A;     /* body copy, 8.9:1 on --paper */
+    --paper: #F5F8FA;        /* (brand) light background */
+    --surface: #FFFFFF;      /* (brand) white */
+
+    /* The teal splits in two. --accent is the vivid brand teal and is only
+       ever a FILL: as text on white it measures 2.1:1 and is illegible.
+       --accent-text is the same hue darkened to 4.8:1 for type, thin strokes,
+       borders and focus rings. */
+    --accent: #16C7C8;       /* (brand) primary teal — fills only */
+    --accent-text: #0F7F80;  /* readable teal for text and 1px lines */
+    --accent-ink: #071A2B;   /* (brand) navy — text ON teal, 8.5:1 */
+    --accent-2: #0F7F80;     /* numbering and diagram strokes */
+
+    --muted: #5D6E7E;        /* brand muted is #6B7C8C (4.3:1); darkened to
+                                5.0:1 because it's used at 0.78-0.82rem */
+    --border: #DCE5EA;       /* (brand) light border */
+    --warn: #A86A00;         /* status only, deliberately outside the brand */
+    --danger: #B3452F;       /* status only */
+    --shadow: 0 1px 2px rgba(7, 26, 43, 0.05), 0 8px 24px rgba(7, 26, 43, 0.08);
     --radius: 14px;
     --serif: "Fraunces", Georgia, "Times New Roman", serif;
     --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -31,28 +43,34 @@
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --ink: #edefea;
-      --ink-soft: #c4ccd1;
-      --paper: #0e1720;
-      --surface: #16212b;
-      --accent: #45ab9b;
-      --accent-ink: #06221d;
-      --accent-2: #d3a05e;
-      --muted: #93a2aa;
-      --border: #263139;
+      --ink: #F5F8FA;
+      --ink-soft: #A9BCCB;
+      --paper: #071A2B;
+      --surface: #0E2A42;
+      --accent: #20D9D9;
+      --accent-text: #20D9D9;
+      --accent-ink: #071A2B;
+      --accent-2: #20D9D9;
+      --muted: #8FA3B4;
+      --border: #1C3A55;
+      --warn: #E0A54A;
+      --danger: #F08A72;
       --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
     }
   }
   :root[data-theme="dark"] {
-    --ink: #edefea;
-    --ink-soft: #c4ccd1;
-    --paper: #0e1720;
-    --surface: #16212b;
-    --accent: #45ab9b;
-    --accent-ink: #06221d;
-    --accent-2: #d3a05e;
-    --muted: #93a2aa;
-    --border: #263139;
+    --ink: #F5F8FA;
+    --ink-soft: #A9BCCB;
+    --paper: #071A2B;
+    --surface: #0E2A42;
+    --accent: #20D9D9;
+    --accent-text: #20D9D9;
+    --accent-ink: #071A2B;
+    --accent-2: #20D9D9;
+    --muted: #8FA3B4;
+    --border: #1C3A55;
+    --warn: #E0A54A;
+    --danger: #F08A72;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
   }
 
@@ -75,7 +93,7 @@
     font-size: 12.5px;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-text);
     font-weight: 500;
   }
   h1, h2, h3 { font-family: var(--serif); text-wrap: balance; color: var(--ink); font-weight: 600; }
@@ -93,11 +111,11 @@
     cursor: pointer; text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     white-space: nowrap;
   }
-  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .btn:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; }
   .btn-primary { background: var(--accent); color: var(--accent-ink); }
   .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
   .btn-ghost { background: transparent; color: var(--ink); border-color: var(--border); }
-  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost:hover { border-color: var(--accent-text); color: var(--accent-text); }
   .btn-block { width: 100%; }
   .btn[disabled] { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 
@@ -113,7 +131,7 @@
   .brand-mark { width: 26px; height: 26px; flex: none; }
   .nav-links { display: flex; align-items: center; gap: 28px; font-size: 0.92rem; font-weight: 500; }
   .nav-links a:not(.btn) { text-decoration: none; color: var(--ink-soft); }
-  .nav-links a:not(.btn):hover { color: var(--accent); }
+  .nav-links a:not(.btn):hover { color: var(--accent-text); }
   .nav-actions { display: flex; align-items: center; gap: 10px; }
   .nav-links-wrap { display: flex; align-items: center; gap: 28px; }
   @media (max-width: 760px) {
@@ -158,7 +176,7 @@
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
     padding: 22px; display: flex; flex-direction: column; gap: 10px;
   }
-  .card .ico { width: 34px; height: 34px; color: var(--accent); }
+  .card .ico { width: 34px; height: 34px; color: var(--accent-text); }
   .card h3 { margin-top: 2px; }
   .card p { font-size: 0.93rem; }
 
@@ -178,7 +196,7 @@
   .step { position: relative; padding: 4px 18px 4px 0; border-left: 2px solid var(--border); padding-left: 20px; }
   .step:first-child { }
   @media (max-width: 900px) { .step { border-left: none; border-top: 2px solid var(--border); padding-left: 0; padding-top: 20px; } .step:first-child { border-top: none; } }
-  .step-num { font-family: var(--mono); font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+  .step-num { font-family: var(--mono); font-size: 0.85rem; color: var(--accent-text); font-weight: 600; }
   .step h3 { margin: 8px 0 6px; font-size: 1.05rem; }
   .step p { font-size: 0.9rem; }
 
@@ -197,22 +215,22 @@
     padding: 11px 13px; font-size: 0.95rem; color: var(--ink); width: 100%;
   }
   .field input:focus, .field select:focus, .field textarea:focus {
-    outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent);
+    outline: 2px solid var(--accent-text); outline-offset: 1px; border-color: var(--accent-text);
   }
   .field textarea { resize: vertical; min-height: 88px; }
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
-  .field-error { font-size: 0.78rem; color: #b3452f; display: none; }
-  .field.has-error input, .field.has-error select, .field.has-error textarea { border-color: #b3452f; }
+  .field-error { font-size: 0.78rem; color: var(--danger); display: none; }
+  .field.has-error input, .field.has-error select, .field.has-error textarea { border-color: var(--danger); }
   .field.has-error .field-error { display: block; }
   .privacy-note { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
   .hp { position: absolute; left: -9999px; top: -9999px; }
 
   .form-status { border-radius: 10px; padding: 14px 16px; font-size: 0.9rem; margin-top: 16px; display: none; }
   .form-status.show { display: block; }
-  .form-status.ok { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); border: 1px solid var(--accent); color: var(--ink); }
-  .form-status.warn { background: color-mix(in srgb, var(--accent-2) 16%, var(--surface)); border: 1px solid var(--accent-2); color: var(--ink); }
-  .form-status a.mailto-fallback { color: var(--accent); font-weight: 600; }
+  .form-status.ok { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); border: 1px solid var(--accent-text); color: var(--ink); }
+  .form-status.warn { background: color-mix(in srgb, var(--warn) 16%, var(--surface)); border: 1px solid var(--warn); color: var(--ink); }
+  .form-status a.mailto-fallback { color: var(--accent-text); font-weight: 600; }
 
   footer.site { border-top: 1px solid var(--border); padding-block: 40px; margin-top: 20px; }
   .foot-grid { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
@@ -220,7 +238,7 @@
   .foot-links { display: flex; gap: 36px; flex-wrap: wrap; }
   .foot-links h4 { font-family: var(--sans); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; }
   .foot-links a { display: block; font-size: 0.88rem; color: var(--ink-soft); text-decoration: none; padding: 4px 0; }
-  .foot-links a:hover { color: var(--accent); }
+  .foot-links a:hover { color: var(--accent-text); }
   .foot-bottom { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
 </style>
 <header class="site">
@@ -417,7 +435,7 @@
       <div>
         <p class="eyebrow">Get started</p>
         <h2>Tell us about your company.</h2>
-        <p style="margin-top: 14px;">Share a few details and our team will set up your organization and reach out to get you started. If you already have an account, <a href="https://accounting.propcrm.app/" style="color: var(--accent); font-weight: 600;">sign in here</a> instead.</p>
+        <p style="margin-top: 14px;">Share a few details and our team will set up your organization and reach out to get you started. If you already have an account, <a href="https://accounting.propcrm.app/" style="color: var(--accent-text); font-weight: 600;">sign in here</a> instead.</p>
       </div>
       <div class="signup-panel">
         <form id="signup-form" novalidate>
@@ -539,16 +557,28 @@
 
   /* ---------- Tokens ---------- */
   :root {
-    --ink: #12202e;
-    --ink-soft: #2b3d4a;
-    --paper: #f4f6f3;
-    --surface: #ffffff;
-    --accent: #1f6f63;
-    --accent-ink: #ffffff;
-    --accent-2: #b8873d;
-    --muted: #5b6b73;
-    --border: #e2e6e1;
-    --shadow: 0 1px 2px rgba(18, 32, 46, 0.04), 0 8px 24px rgba(18, 32, 46, 0.06);
+    /* NeoProp brand palette. Values marked (brand) are exact; the rest are
+       derived from them for states, depth and contrast. */
+    --ink: #102333;          /* (brand) dark text */
+    --ink-soft: #33475A;     /* body copy, 8.9:1 on --paper */
+    --paper: #F5F8FA;        /* (brand) light background */
+    --surface: #FFFFFF;      /* (brand) white */
+
+    /* The teal splits in two. --accent is the vivid brand teal and is only
+       ever a FILL: as text on white it measures 2.1:1 and is illegible.
+       --accent-text is the same hue darkened to 4.8:1 for type, thin strokes,
+       borders and focus rings. */
+    --accent: #16C7C8;       /* (brand) primary teal — fills only */
+    --accent-text: #0F7F80;  /* readable teal for text and 1px lines */
+    --accent-ink: #071A2B;   /* (brand) navy — text ON teal, 8.5:1 */
+    --accent-2: #0F7F80;     /* numbering and diagram strokes */
+
+    --muted: #5D6E7E;        /* brand muted is #6B7C8C (4.3:1); darkened to
+                                5.0:1 because it's used at 0.78-0.82rem */
+    --border: #DCE5EA;       /* (brand) light border */
+    --warn: #A86A00;         /* status only, deliberately outside the brand */
+    --danger: #B3452F;       /* status only */
+    --shadow: 0 1px 2px rgba(7, 26, 43, 0.05), 0 8px 24px rgba(7, 26, 43, 0.08);
     --radius: 14px;
     --serif: "Fraunces", Georgia, "Times New Roman", serif;
     --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -556,28 +586,34 @@
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --ink: #edefea;
-      --ink-soft: #c4ccd1;
-      --paper: #0e1720;
-      --surface: #16212b;
-      --accent: #45ab9b;
-      --accent-ink: #06221d;
-      --accent-2: #d3a05e;
-      --muted: #93a2aa;
-      --border: #263139;
+      --ink: #F5F8FA;
+      --ink-soft: #A9BCCB;
+      --paper: #071A2B;
+      --surface: #0E2A42;
+      --accent: #20D9D9;
+      --accent-text: #20D9D9;
+      --accent-ink: #071A2B;
+      --accent-2: #20D9D9;
+      --muted: #8FA3B4;
+      --border: #1C3A55;
+      --warn: #E0A54A;
+      --danger: #F08A72;
       --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
     }
   }
   :root[data-theme="dark"] {
-    --ink: #edefea;
-    --ink-soft: #c4ccd1;
-    --paper: #0e1720;
-    --surface: #16212b;
-    --accent: #45ab9b;
-    --accent-ink: #06221d;
-    --accent-2: #d3a05e;
-    --muted: #93a2aa;
-    --border: #263139;
+    --ink: #F5F8FA;
+    --ink-soft: #A9BCCB;
+    --paper: #071A2B;
+    --surface: #0E2A42;
+    --accent: #20D9D9;
+    --accent-text: #20D9D9;
+    --accent-ink: #071A2B;
+    --accent-2: #20D9D9;
+    --muted: #8FA3B4;
+    --border: #1C3A55;
+    --warn: #E0A54A;
+    --danger: #F08A72;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
   }
 
@@ -600,7 +636,7 @@
     font-size: 12.5px;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-text);
     font-weight: 500;
   }
   h1, h2, h3 { font-family: var(--serif); text-wrap: balance; color: var(--ink); font-weight: 600; }
@@ -618,11 +654,11 @@
     cursor: pointer; text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     white-space: nowrap;
   }
-  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .btn:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; }
   .btn-primary { background: var(--accent); color: var(--accent-ink); }
   .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
   .btn-ghost { background: transparent; color: var(--ink); border-color: var(--border); }
-  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost:hover { border-color: var(--accent-text); color: var(--accent-text); }
   .btn-block { width: 100%; }
   .btn[disabled] { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 
@@ -638,7 +674,7 @@
   .brand-mark { width: 26px; height: 26px; flex: none; }
   .nav-links { display: flex; align-items: center; gap: 28px; font-size: 0.92rem; font-weight: 500; }
   .nav-links a:not(.btn) { text-decoration: none; color: var(--ink-soft); }
-  .nav-links a:not(.btn):hover { color: var(--accent); }
+  .nav-links a:not(.btn):hover { color: var(--accent-text); }
   .nav-actions { display: flex; align-items: center; gap: 10px; }
   .nav-links-wrap { display: flex; align-items: center; gap: 28px; }
   @media (max-width: 760px) {
@@ -683,7 +719,7 @@
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
     padding: 22px; display: flex; flex-direction: column; gap: 10px;
   }
-  .card .ico { width: 34px; height: 34px; color: var(--accent); }
+  .card .ico { width: 34px; height: 34px; color: var(--accent-text); }
   .card h3 { margin-top: 2px; }
   .card p { font-size: 0.93rem; }
 
@@ -703,7 +739,7 @@
   .step { position: relative; padding: 4px 18px 4px 0; border-left: 2px solid var(--border); padding-left: 20px; }
   .step:first-child { }
   @media (max-width: 900px) { .step { border-left: none; border-top: 2px solid var(--border); padding-left: 0; padding-top: 20px; } .step:first-child { border-top: none; } }
-  .step-num { font-family: var(--mono); font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+  .step-num { font-family: var(--mono); font-size: 0.85rem; color: var(--accent-text); font-weight: 600; }
   .step h3 { margin: 8px 0 6px; font-size: 1.05rem; }
   .step p { font-size: 0.9rem; }
 
@@ -722,22 +758,22 @@
     padding: 11px 13px; font-size: 0.95rem; color: var(--ink); width: 100%;
   }
   .field input:focus, .field select:focus, .field textarea:focus {
-    outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent);
+    outline: 2px solid var(--accent-text); outline-offset: 1px; border-color: var(--accent-text);
   }
   .field textarea { resize: vertical; min-height: 88px; }
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
-  .field-error { font-size: 0.78rem; color: #b3452f; display: none; }
-  .field.has-error input, .field.has-error select, .field.has-error textarea { border-color: #b3452f; }
+  .field-error { font-size: 0.78rem; color: var(--danger); display: none; }
+  .field.has-error input, .field.has-error select, .field.has-error textarea { border-color: var(--danger); }
   .field.has-error .field-error { display: block; }
   .privacy-note { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
   .hp { position: absolute; left: -9999px; top: -9999px; }
 
   .form-status { border-radius: 10px; padding: 14px 16px; font-size: 0.9rem; margin-top: 16px; display: none; }
   .form-status.show { display: block; }
-  .form-status.ok { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); border: 1px solid var(--accent); color: var(--ink); }
-  .form-status.warn { background: color-mix(in srgb, var(--accent-2) 16%, var(--surface)); border: 1px solid var(--accent-2); color: var(--ink); }
-  .form-status a.mailto-fallback { color: var(--accent); font-weight: 600; }
+  .form-status.ok { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); border: 1px solid var(--accent-text); color: var(--ink); }
+  .form-status.warn { background: color-mix(in srgb, var(--warn) 16%, var(--surface)); border: 1px solid var(--warn); color: var(--ink); }
+  .form-status a.mailto-fallback { color: var(--accent-text); font-weight: 600; }
 
   footer.site { border-top: 1px solid var(--border); padding-block: 40px; margin-top: 20px; }
   .foot-grid { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
@@ -745,7 +781,7 @@
   .foot-links { display: flex; gap: 36px; flex-wrap: wrap; }
   .foot-links h4 { font-family: var(--sans); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; }
   .foot-links a { display: block; font-size: 0.88rem; color: var(--ink-soft); text-decoration: none; padding: 4px 0; }
-  .foot-links a:hover { color: var(--accent); }
+  .foot-links a:hover { color: var(--accent-text); }
   .foot-bottom { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
 </style>
 </head>
@@ -944,7 +980,7 @@
       <div>
         <p class="eyebrow">Get started</p>
         <h2>Tell us about your company.</h2>
-        <p style="margin-top: 14px;">Share a few details and our team will set up your organization and reach out to get you started. If you already have an account, <a href="https://accounting.propcrm.app/" style="color: var(--accent); font-weight: 600;">sign in here</a> instead.</p>
+        <p style="margin-top: 14px;">Share a few details and our team will set up your organization and reach out to get you started. If you already have an account, <a href="https://accounting.propcrm.app/" style="color: var(--accent-text); font-weight: 600;">sign in here</a> instead.</p>
       </div>
       <div class="signup-panel">
         <form id="signup-form" novalidate>

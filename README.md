@@ -55,7 +55,51 @@ email API key/endpoint/from-address to swap into that scheduled task.
 
 ## Branding note
 
-neoprop.ai's exact brand colors/fonts couldn't be extracted automatically, so
-the palette (deep teal `#1f6f63` / brass `#b8873d` on an off-white ground,
-Fraunces + IBM Plex Sans/Mono) is an approximation of a clean, modern,
-professional look. Share neoprop.ai's real brand values to get an exact match.
+The palette matches neoprop.ai:
+
+| Role              | Hex       |
+|-------------------|-----------|
+| Primary navy      | `#071A2B` |
+| Primary teal      | `#16C7C8` |
+| Bright cyan       | `#20D9D9` |
+| White             | `#FFFFFF` |
+| Light background  | `#F5F8FA` |
+| Dark text         | `#102333` |
+| Muted text        | `#6B7C8C` |
+| Light border      | `#DCE5EA` |
+
+Three values are derived rather than taken from that list, each for a
+contrast reason:
+
+- `--accent-text` (`#0F7F80`) — the brand teal measures 2.1:1 as text on
+  white, so it is used only as a fill. This is the same hue darkened to
+  4.5:1 for type, 1px borders and focus rings.
+- `--accent-on-tint` (`#0D7576`) — the numbered chips tint their own
+  background with teal, which costs enough contrast that `--accent-text`
+  drops to 4.28:1. Darker again so chip labels clear AA at 12.5px.
+- `--muted` (`#5D6E7E`) — brand muted is 4.3:1 on the light background and
+  is used at 0.78–0.82rem. Darkened to 5.0:1.
+
+Primary buttons use navy text on teal (8.4:1), never white (2.1:1).
+
+The palette is applied through the token blocks at the top of `page.html`
+(light, `prefers-color-scheme: dark`, and explicit `[data-theme="dark"]`),
+plus a "Brand expression layer" at the end of the stylesheet that gives the
+header, hero and footer a navy field where the vivid teal is legible at full
+strength. Every text pair passes WCAG AA in both themes.
+
+## Verification
+
+Run from this folder after editing `page.html`:
+
+- `python3 build.py` — regenerates `artifact-file.html` and
+  `full-doc-preview.html`.
+- `node quine-test.js` — checks the self-publish logic round-trips across
+  three generations, including adversarial `</script>` input.
+- `node browser-check.js` — parses the published page in a real browser.
+  Needs Playwright + Chromium. A blocked Google Fonts request is expected
+  offline and is not a failure.
+
+`build.py` resets the embedded signup store to `[]`. Once real signups have
+accumulated on the live page, reconcile them before republishing from a
+fresh build or they will be overwritten.

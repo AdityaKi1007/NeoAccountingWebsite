@@ -240,12 +240,170 @@
   .foot-links a { display: block; font-size: 0.88rem; color: var(--ink-soft); text-decoration: none; padding: 4px 0; }
   .foot-links a:hover { color: var(--accent-text); }
   .foot-bottom { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
+  /* ==================================================================
+     Brand expression layer
+     ------------------------------------------------------------------
+     The recolor left every surface light, which gave the vivid brand
+     teal (#16C7C8) nowhere to live — it measures 2.1:1 as text on white,
+     so it could only ever appear as small fills. This layer carves out a
+     navy masthead where the teal and cyan are legible at full strength,
+     and leaves the ledger content below deliberately quiet. One loud
+     place, everything else disciplined.
+     ================================================================== */
+
+  :root {
+    --masthead: #071A2B; --masthead-lift: #0E2A42; --cyan: #20D9D9;
+    /* The chips below tint their own background with teal, which costs
+       enough contrast to drop --accent-text to 4.28:1. This is the same
+       hue taken darker so chip labels clear AA at 12.5px. */
+    --accent-on-tint: #0D7576;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --masthead: #0A2237; --masthead-lift: #123048; --accent-on-tint: var(--cyan); }
+  }
+  :root[data-theme="dark"] { --masthead: #0A2237; --masthead-lift: #123048; --accent-on-tint: var(--cyan); }
+
+  /* Brand signature: a single gradient hairline pinned across the top. */
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--cyan) 50%, var(--accent) 100%);
+  }
+
+  /* ---- Masthead + footer: navy field, tokens flipped for the subtree ---- */
+  header.site, .hero, footer.site {
+    --ink: #F5F8FA;
+    --ink-soft: #A9BCCB;
+    --muted: #8FA3B4;
+    --surface: var(--masthead-lift);
+    --border: rgba(255, 255, 255, 0.14);
+    --accent-text: var(--cyan);
+    --accent-2: var(--cyan);
+    --accent-on-tint: var(--cyan);
+    background: var(--masthead);
+    color: var(--ink);
+  }
+  header.site { backdrop-filter: none; border-bottom: 1px solid rgba(255, 255, 255, 0.10); }
+  footer.site { margin-top: 0; border-top: none; }
+
+  /* ---- Hero ---- */
+  .hero { position: relative; overflow: hidden; padding-block: 86px 74px; }
+  .hero::after {
+    content: ""; position: absolute; z-index: 0; pointer-events: none;
+    width: 640px; height: 640px; right: -180px; top: -280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(32, 217, 217, 0.20) 0%, rgba(32, 217, 217, 0) 68%);
+  }
+  .hero > .wrap { position: relative; z-index: 1; }
+
+  /* Stats earn a rule above them: it separates proof from the call to action. */
+  .hero-stats {
+    gap: 34px; margin-top: 38px; padding-top: 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .hero-stat b { color: var(--cyan); font-size: 1.55rem; letter-spacing: -0.01em; }
+
+  /* ---- Ledger card: the product moment ---- */
+  .ledger-card {
+    position: relative;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(32, 217, 217, 0.13);
+  }
+  .ledger-card .cap { display: flex; align-items: center; gap: 8px; }
+  .ledger-card .cap::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%; flex: none;
+    background: var(--cyan); box-shadow: 0 0 0 3px rgba(32, 217, 217, 0.20);
+    animation: live-pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  .ledger-row .amt { color: #F5F8FA; }
+  .ledger-total { border-top: 2px solid rgba(32, 217, 217, 0.55); color: var(--cyan); }
+
+  /* The one orchestrated motion on the page: the ledger fills in on load.
+     Nothing animates on scroll. Globally disabled under reduced-motion. */
+  @keyframes ledger-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+  .ledger-row, .ledger-total { animation: ledger-in 0.5s ease both; }
+  .ledger-row:nth-of-type(1) { animation-delay: 0.10s; }
+  .ledger-row:nth-of-type(2) { animation-delay: 0.19s; }
+  .ledger-row:nth-of-type(3) { animation-delay: 0.28s; }
+  .ledger-row:nth-of-type(4) { animation-delay: 0.37s; }
+  .ledger-total { animation-delay: 0.50s; }
+
+  /* ---- Section heads: a short gradient rule marks each new movement ---- */
+  .section-head { position: relative; padding-top: 19px; }
+  .section-head::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 44px; height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+  }
+
+  /* ---- Icons become product chips rather than floating strokes ---- */
+  .card .ico {
+    width: 40px; height: 40px; padding: 9px; border-radius: 11px; box-sizing: border-box;
+    background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+    color: var(--accent-on-tint);
+  }
+
+  /* ---- Numbered markers: tinted chips, aligned to the baseline grid ---- */
+  .diff-num, .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 7px; padding-top: 0; font-size: 0.78rem;
+    background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+    color: var(--accent-on-tint);
+  }
+  .step { border-left-color: color-mix(in srgb, var(--accent) 42%, var(--border)); }
+  @media (max-width: 900px) {
+    .step { border-top-color: color-mix(in srgb, var(--accent) 42%, var(--border)); }
+  }
+
+  /* ---- Primary action: a teal lift, only on the button that converts ---- */
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(22, 199, 200, 0.34);
+  }
+
+  /* ---- Signup panel: gradient edge marks the page's one conversion point ---- */
+  .signup-panel { position: relative; overflow: hidden; }
+  .signup-panel::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+  }
+
+  /* ---- Narrow phones: the header ran out of room at 390px (iPhone 12-15).
+     Sign in is reachable from the hero and the footer, so the header keeps
+     only the converting action. ---- */
+  @media (max-width: 560px) {
+    .nav-actions .btn-ghost { display: none; }
+    .brand { font-size: 1.05rem; }
+    .brand-mark { width: 23px; height: 23px; }
+    .nav-actions .btn { padding: 10px 16px; font-size: 0.88rem; }
+    .hero { padding-block: 54px 50px; }
+    .hero-stats { gap: 22px 30px; }
+  }
+
+  /* Nav collapsed at 760px, but the two actions still overflowed a 768px
+     tablet by 3px. Collapse the links earlier instead. */
+  @media (max-width: 820px) { .nav-links { display: none; } }
+
+  /* The global reduced-motion rule clamps animation-duration but not
+     iteration-count, which would leave the infinite pulse flickering at
+     0.001ms. Stop these outright instead. */
+  @media (prefers-reduced-motion: reduce) {
+    .ledger-card .cap::before { animation: none; opacity: 1; }
+    .ledger-row, .ledger-total { animation: none; opacity: 1; transform: none; }
+  }
+
+  /* Links carried no focus style of their own; on the navy masthead the
+     browser default is easy to lose. One ring, visible on either field. */
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
 </style>
 <header class="site">
   <div class="wrap nav-row">
     <a class="brand" href="#top">
       <svg class="brand-mark" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-        <rect x="1" y="1" width="24" height="24" rx="7" fill="var(--accent)"></rect>
+        <defs><linearGradient id="bm-head" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16C7C8"></stop><stop offset="1" stop-color="#20D9D9"></stop></linearGradient></defs><rect x="1" y="1" width="24" height="24" rx="7" fill="url(#bm-head)"></rect>
         <path d="M7 17.5V9.2L13 15.2L19 8.6V17" stroke="var(--accent-ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
       </svg>
       NeoAccounting
@@ -506,7 +664,7 @@
       <div class="foot-brand">
         <a class="brand" href="#top">
           <svg class="brand-mark" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-            <rect x="1" y="1" width="24" height="24" rx="7" fill="var(--accent)"></rect>
+            <defs><linearGradient id="bm-foot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16C7C8"></stop><stop offset="1" stop-color="#20D9D9"></stop></linearGradient></defs><rect x="1" y="1" width="24" height="24" rx="7" fill="url(#bm-foot)"></rect>
             <path d="M7 17.5V9.2L13 15.2L19 8.6V17" stroke="var(--accent-ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
           </svg>
           NeoAccounting
@@ -783,6 +941,164 @@
   .foot-links a { display: block; font-size: 0.88rem; color: var(--ink-soft); text-decoration: none; padding: 4px 0; }
   .foot-links a:hover { color: var(--accent-text); }
   .foot-bottom { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
+  /* ==================================================================
+     Brand expression layer
+     ------------------------------------------------------------------
+     The recolor left every surface light, which gave the vivid brand
+     teal (#16C7C8) nowhere to live — it measures 2.1:1 as text on white,
+     so it could only ever appear as small fills. This layer carves out a
+     navy masthead where the teal and cyan are legible at full strength,
+     and leaves the ledger content below deliberately quiet. One loud
+     place, everything else disciplined.
+     ================================================================== */
+
+  :root {
+    --masthead: #071A2B; --masthead-lift: #0E2A42; --cyan: #20D9D9;
+    /* The chips below tint their own background with teal, which costs
+       enough contrast to drop --accent-text to 4.28:1. This is the same
+       hue taken darker so chip labels clear AA at 12.5px. */
+    --accent-on-tint: #0D7576;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --masthead: #0A2237; --masthead-lift: #123048; --accent-on-tint: var(--cyan); }
+  }
+  :root[data-theme="dark"] { --masthead: #0A2237; --masthead-lift: #123048; --accent-on-tint: var(--cyan); }
+
+  /* Brand signature: a single gradient hairline pinned across the top. */
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 100;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--cyan) 50%, var(--accent) 100%);
+  }
+
+  /* ---- Masthead + footer: navy field, tokens flipped for the subtree ---- */
+  header.site, .hero, footer.site {
+    --ink: #F5F8FA;
+    --ink-soft: #A9BCCB;
+    --muted: #8FA3B4;
+    --surface: var(--masthead-lift);
+    --border: rgba(255, 255, 255, 0.14);
+    --accent-text: var(--cyan);
+    --accent-2: var(--cyan);
+    --accent-on-tint: var(--cyan);
+    background: var(--masthead);
+    color: var(--ink);
+  }
+  header.site { backdrop-filter: none; border-bottom: 1px solid rgba(255, 255, 255, 0.10); }
+  footer.site { margin-top: 0; border-top: none; }
+
+  /* ---- Hero ---- */
+  .hero { position: relative; overflow: hidden; padding-block: 86px 74px; }
+  .hero::after {
+    content: ""; position: absolute; z-index: 0; pointer-events: none;
+    width: 640px; height: 640px; right: -180px; top: -280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(32, 217, 217, 0.20) 0%, rgba(32, 217, 217, 0) 68%);
+  }
+  .hero > .wrap { position: relative; z-index: 1; }
+
+  /* Stats earn a rule above them: it separates proof from the call to action. */
+  .hero-stats {
+    gap: 34px; margin-top: 38px; padding-top: 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .hero-stat b { color: var(--cyan); font-size: 1.55rem; letter-spacing: -0.01em; }
+
+  /* ---- Ledger card: the product moment ---- */
+  .ledger-card {
+    position: relative;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(32, 217, 217, 0.13);
+  }
+  .ledger-card .cap { display: flex; align-items: center; gap: 8px; }
+  .ledger-card .cap::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%; flex: none;
+    background: var(--cyan); box-shadow: 0 0 0 3px rgba(32, 217, 217, 0.20);
+    animation: live-pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  .ledger-row .amt { color: #F5F8FA; }
+  .ledger-total { border-top: 2px solid rgba(32, 217, 217, 0.55); color: var(--cyan); }
+
+  /* The one orchestrated motion on the page: the ledger fills in on load.
+     Nothing animates on scroll. Globally disabled under reduced-motion. */
+  @keyframes ledger-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+  .ledger-row, .ledger-total { animation: ledger-in 0.5s ease both; }
+  .ledger-row:nth-of-type(1) { animation-delay: 0.10s; }
+  .ledger-row:nth-of-type(2) { animation-delay: 0.19s; }
+  .ledger-row:nth-of-type(3) { animation-delay: 0.28s; }
+  .ledger-row:nth-of-type(4) { animation-delay: 0.37s; }
+  .ledger-total { animation-delay: 0.50s; }
+
+  /* ---- Section heads: a short gradient rule marks each new movement ---- */
+  .section-head { position: relative; padding-top: 19px; }
+  .section-head::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 44px; height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+  }
+
+  /* ---- Icons become product chips rather than floating strokes ---- */
+  .card .ico {
+    width: 40px; height: 40px; padding: 9px; border-radius: 11px; box-sizing: border-box;
+    background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+    color: var(--accent-on-tint);
+  }
+
+  /* ---- Numbered markers: tinted chips, aligned to the baseline grid ---- */
+  .diff-num, .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 7px; padding-top: 0; font-size: 0.78rem;
+    background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+    color: var(--accent-on-tint);
+  }
+  .step { border-left-color: color-mix(in srgb, var(--accent) 42%, var(--border)); }
+  @media (max-width: 900px) {
+    .step { border-top-color: color-mix(in srgb, var(--accent) 42%, var(--border)); }
+  }
+
+  /* ---- Primary action: a teal lift, only on the button that converts ---- */
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(22, 199, 200, 0.34);
+  }
+
+  /* ---- Signup panel: gradient edge marks the page's one conversion point ---- */
+  .signup-panel { position: relative; overflow: hidden; }
+  .signup-panel::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+  }
+
+  /* ---- Narrow phones: the header ran out of room at 390px (iPhone 12-15).
+     Sign in is reachable from the hero and the footer, so the header keeps
+     only the converting action. ---- */
+  @media (max-width: 560px) {
+    .nav-actions .btn-ghost { display: none; }
+    .brand { font-size: 1.05rem; }
+    .brand-mark { width: 23px; height: 23px; }
+    .nav-actions .btn { padding: 10px 16px; font-size: 0.88rem; }
+    .hero { padding-block: 54px 50px; }
+    .hero-stats { gap: 22px 30px; }
+  }
+
+  /* Nav collapsed at 760px, but the two actions still overflowed a 768px
+     tablet by 3px. Collapse the links earlier instead. */
+  @media (max-width: 820px) { .nav-links { display: none; } }
+
+  /* The global reduced-motion rule clamps animation-duration but not
+     iteration-count, which would leave the infinite pulse flickering at
+     0.001ms. Stop these outright instead. */
+  @media (prefers-reduced-motion: reduce) {
+    .ledger-card .cap::before { animation: none; opacity: 1; }
+    .ledger-row, .ledger-total { animation: none; opacity: 1; transform: none; }
+  }
+
+  /* Links carried no focus style of their own; on the navy masthead the
+     browser default is easy to lose. One ring, visible on either field. */
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
 </style>
 </head>
 <body>
@@ -790,7 +1106,7 @@
   <div class="wrap nav-row">
     <a class="brand" href="#top">
       <svg class="brand-mark" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-        <rect x="1" y="1" width="24" height="24" rx="7" fill="var(--accent)"></rect>
+        <defs><linearGradient id="bm-head" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16C7C8"></stop><stop offset="1" stop-color="#20D9D9"></stop></linearGradient></defs><rect x="1" y="1" width="24" height="24" rx="7" fill="url(#bm-head)"></rect>
         <path d="M7 17.5V9.2L13 15.2L19 8.6V17" stroke="var(--accent-ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
       </svg>
       NeoAccounting
@@ -1051,7 +1367,7 @@
       <div class="foot-brand">
         <a class="brand" href="#top">
           <svg class="brand-mark" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-            <rect x="1" y="1" width="24" height="24" rx="7" fill="var(--accent)"></rect>
+            <defs><linearGradient id="bm-foot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16C7C8"></stop><stop offset="1" stop-color="#20D9D9"></stop></linearGradient></defs><rect x="1" y="1" width="24" height="24" rx="7" fill="url(#bm-foot)"></rect>
             <path d="M7 17.5V9.2L13 15.2L19 8.6V17" stroke="var(--accent-ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
           </svg>
           NeoAccounting

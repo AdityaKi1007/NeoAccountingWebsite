@@ -18,7 +18,9 @@ jobs:
         run: |
           python3 build.py
           cp full-doc-preview.html index.html
-          zip build.zip index.html
+          # Amplify serves whatever is in this zip. og-image.png backs the
+          # og:image meta tag; robots.txt and sitemap.xml must be at the root.
+          zip build.zip index.html og-image.png robots.txt sitemap.xml
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

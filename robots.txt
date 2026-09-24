@@ -1,0 +1,5 @@
+# https://neoaccounting.app/
+User-agent: *
+Allow: /
+
+Sitemap: https://neoaccounting.app/sitemap.xml

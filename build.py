@@ -32,7 +32,7 @@ inner_content = head_part + "\n" + body_part
 # must be a complete document, unlike the file handed to the Artifact tool).
 full_doc_template = (
     "<!doctype html>\n"
-    '<html lang="en">\n'
+    '<html lang="en-AE">\n'
     "<head>\n"
     '<meta charset="utf-8">\n'
     '<meta name="viewport" content="width=device-width, initial-scale=1">\n'

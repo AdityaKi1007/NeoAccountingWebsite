@@ -1,16 +1,26 @@
 # NeoAccounting website
 
-Source for the NeoAccounting marketing site, published as a Claude Artifact (a
-hosted page on claude.ai, not a self-hosted deployment).
+Source for the NeoAccounting marketing site.
 
 ## Live page
 
-Published at: https://claude.ai/code/artifact/67e89fbf-1826-424f-9a2c-15bd88f0c15b
+Published at: https://neoaccounting.app/
 
-It's currently private to the owning claude.ai account. To let the public
-signup form work for outside visitors, it needs to be shared with edit/
-interact access from the page's share menu (view-only sharing is not enough —
-see "How signups are captured" below).
+Deployed to AWS Amplify by `.github/workflows/deploy.yml` on every push to
+`main`. The workflow runs `python3 build.py`, copies `full-doc-preview.html`
+to `index.html`, zips it, and ships that zip to Amplify app `d2ifmhr1nmutri`
+(eu-central-1) using an OIDC role. `index.html` is the deployed artifact and
+is gitignored, so `full-doc-preview.html` is what actually goes live — not
+`artifact-file.html`.
+
+> **Note:** the "How signups are captured" and "Email backend" sections below
+> predate the move to Amplify and the `Send signup form submissions to
+> info@neoprop.ai via SES` commit. Treat them as historical until reviewed.
+
+**Deploying assets:** the workflow zips `index.html` and nothing else, so any
+additional static file (for example `og-image.png`, which the `og:image` meta
+tag points at, or a future `robots.txt` / `sitemap.xml`) will 404 until it is
+added to the `zip` line in the build step.
 
 ## Files
 
@@ -19,10 +29,8 @@ see "How signups are captured" below).
   content, and two placeholder tokens (`@@SIGNUPS_JSON@@`, `@@TEMPLATE_TEXT@@`)
   resolved by `build.py`. Edit this file, not the generated ones.
 - `build.py` — run with `python3 build.py` (from this folder) after editing
-  `page.html`. Produces `artifact-file.html` (and a couple of local preview/
-  debug files that aren't included here). Publish `artifact-file.html` via
-  Claude's Artifact tool to update the live page — republishing the same
-  artifact URL keeps the link and its accumulated signups.
+  `page.html`. Produces `artifact-file.html` and `full-doc-preview.html`.
+  Pushing to `main` is what updates the live site; see Live page above.
 - `artifact-file.html` — the exact file that was last published live (kept
   here as a reference/backup).
 - `quine-test.js` (run with `node`) / `browser-check.js` (run with

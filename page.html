@@ -64,7 +64,33 @@
       ],
       "publisher": {
         "@id": "https://neoaccounting.app/#organization"
-      }
+      },
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Starter",
+          "price": "50",
+          "priceCurrency": "AED",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "price": "50",
+            "priceCurrency": "AED",
+            "unitText": "organization per month"
+          }
+        },
+        {
+          "@type": "Offer",
+          "name": "Premium",
+          "price": "95",
+          "priceCurrency": "AED",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "price": "95",
+            "priceCurrency": "AED",
+            "unitText": "organization per month"
+          }
+        }
+      ]
     },
     {
       "@type": "Organization",
@@ -502,6 +528,46 @@
     border-radius: 4px;
   }
 
+  /* ---------- Pricing ---------- */
+  .price-grid { gap: 20px; }
+  .price-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 26px 24px; display: flex; flex-direction: column;
+  }
+  /* Premium carries the accent edge because it is the middle tier, not because
+     of any popularity claim we can substantiate. */
+  .price-card.featured { border-color: var(--accent); box-shadow: var(--shadow); }
+  .price-card h3 { font-size: 1.2rem; }
+  .price-note { font-size: 0.88rem; color: var(--ink-soft); margin-top: 6px; }
+  .price-tag { margin-top: 18px; }
+  .price-amt {
+    font-family: var(--serif); font-weight: 600; font-size: 2.15rem; line-height: 1.05;
+    color: var(--ink); letter-spacing: -0.015em;
+  }
+  .price-amt-text { font-size: 1.7rem; }
+  .price-per { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .price-cta { margin: 20px 0 4px; }
+  .price-inherit {
+    font-size: 0.85rem; font-weight: 600; color: var(--ink);
+    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .price-feats { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; font-size: 0.9rem; }
+  .price-card .price-inherit + .price-feats { margin-top: 12px; }
+  .price-feats li { display: flex; gap: 10px; align-items: flex-start; color: var(--ink-soft); }
+  .price-feats .tick { width: 15px; height: 15px; flex: none; margin-top: 3px; color: var(--accent-text); }
+  .price-foot { font-size: 0.82rem; color: var(--muted); margin-top: 22px; max-width: 70ch; }
+  .price-foot a { color: var(--accent-text); font-weight: 600; }
+  @media (max-width: 900px) {
+    .price-grid { grid-template-columns: 1fr; }
+    .price-card { padding: 22px 20px; }
+  }
+
+  /* The header is sticky (79px desktop, 73px mobile), so an anchor link used
+     to scroll its target underneath it and hide the section heading. This
+     affects every nav link, not just Pricing. */
+  section[id] { scroll-margin-top: 95px; }
+  @media (max-width: 560px) { section[id] { scroll-margin-top: 86px; } }
+
 </style>
 <!--BODY-->
 <header class="site">
@@ -515,6 +581,7 @@
     </a>
     <div class="nav-links-wrap">
       <nav class="nav-links">
+        <a href="#pricing">Pricing</a>
         <a href="#solutions">Product</a>
         <a href="#structure">Built for real estate</a>
         <a href="#why">Why NeoAccounting</a>
@@ -693,6 +760,72 @@
     </div>
   </section>
 
+
+  <section id="pricing">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Pricing</p>
+        <h2>Priced per organization, not per project.</h2>
+        <p>Every plan carries unlimited projects and units. What changes between them is how many users and legal entities you run.</p>
+      </div>
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tick" viewBox="0 0 16 16"><path d="M3 8.4l3.3 3.3L13 4.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></symbol></svg>
+      <div class="grid-3 price-grid">
+        <div class="price-card">
+          <h3>Starter</h3>
+          <p class="price-note">For a single legal entity getting its books in order.</p>
+          <div class="price-tag"><span class="price-amt tabular">AED 50</span></div>
+          <p class="price-per">per organization / month</p>
+          <a class="btn btn-ghost btn-block price-cta" href="#signup">Create your account</a>
+          <ul class="price-feats">
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Project and units</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Create quotes and sales orders</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Users access and setup up to 2 users</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Multi-currency setup</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Invoices and receipts</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Single legal entity</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Vendor and customer setup</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Bills and payments management</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Repeated invoicing</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Repeated expenses</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>MFA setup</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Custom template support</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Custom approvals</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Standard reports</span></li>
+          </ul>
+        </div>
+        <div class="price-card featured">
+          <h3>Premium</h3>
+          <p class="price-note">For groups running more than one entity.</p>
+          <div class="price-tag"><span class="price-amt tabular">AED 95</span></div>
+          <p class="price-per">per organization / month</p>
+          <a class="btn btn-primary btn-block price-cta" href="#signup">Create your account</a>
+          <p class="price-inherit">Everything in Starter, plus</p>
+          <ul class="price-feats">
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Multi legal entities</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>API support</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Data backup</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Users access and setup up to 12 users</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Reminders</span></li>
+          </ul>
+        </div>
+        <div class="price-card">
+          <h3>Enterprise</h3>
+          <p class="price-note">For migrations, custom reporting and dedicated support.</p>
+          <div class="price-tag"><span class="price-amt price-amt-text tabular">Call us</span></div>
+          <p class="price-per">to discuss your requirements</p>
+          <a class="btn btn-ghost btn-block price-cta" href="mailto:info@neoprop.ai?subject=NeoAccounting%20Enterprise%20enquiry">Talk to us</a>
+          <p class="price-inherit">Everything in Premium, plus</p>
+          <ul class="price-feats">
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Data &amp; document migration</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>Reports customization</span></li>
+            <li><svg class="tick" aria-hidden="true"><use href="#tick"></use></svg><span>24/7 support</span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="price-foot">Prices are per organization per month and exclude VAT. Annual billing and multi-organization pricing are available &mdash; <a href="mailto:info@neoprop.ai?subject=NeoAccounting%20pricing">ask us</a>.</p>
+    </div>
+  </section>
+
   <section id="signup">
     <div class="wrap signup-wrap">
       <div>
@@ -779,6 +912,7 @@
       <div class="foot-links">
         <div>
           <h4>Product</h4>
+          <a href="#pricing">Pricing</a>
           <a href="#solutions">Solutions</a>
           <a href="#structure">Built for real estate</a>
           <a href="#why">Why NeoAccounting</a>

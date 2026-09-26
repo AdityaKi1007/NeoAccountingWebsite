@@ -2101,6 +2101,8 @@
 
   var SIGNUP_COLLECTION_NOTE = "signups"; // conceptual name; data lives in #signups-data
 
+  var SIGNUP_ENDPOINT = "https://0g8dq5hna3.execute-api.eu-central-1.amazonaws.com/signup";
+
   function readSignups() {
     try {
       var raw = document.getElementById("signups-data").textContent || "[]";
@@ -2267,20 +2269,31 @@
     (async function () {
       try {
         var artifact = (window.claude && window.claude.use) ? await window.claude.use("artifact") : null;
-        if (!artifact) {
-          showFallback(data);
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Create your account";
+        if (artifact) {
+          var current = readSignups();
+          current.push(entry);
+          var html = buildFullPage(current);
+          try {
+            sessionStorage.setItem("neoacct_justSignedUp", "1");
+          } catch (e) { /* ignore */ }
+          await artifact.publish(html);
+          // On success this view reloads automatically; nothing further to do here.
           return;
         }
-        var current = readSignups();
-        current.push(entry);
-        var html = buildFullPage(current);
-        try {
-          sessionStorage.setItem("neoacct_justSignedUp", "1");
-        } catch (e) { /* ignore */ }
-        await artifact.publish(html);
-        // On success this view reloads automatically; nothing further to do here.
+        // Not running inside the Claude Artifact runtime (e.g. the AWS-hosted
+        // copy of this page) — email the signup via the API Gateway + Lambda
+        // + SES endpoint instead. window.claude does not exist on Amplify, so
+        // this is the path every real visitor takes.
+        var res = await fetch(SIGNUP_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error("Request failed");
+        form.reset();
+        showStatus("ok", "Thanks — we've received your details and will be in touch shortly.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Create your account";
       } catch (err) {
         try { sessionStorage.removeItem("neoacct_justSignedUp"); } catch (e) {}
         showFallback(data);
@@ -2346,6 +2359,8 @@
 
   var SIGNUP_COLLECTION_NOTE = "signups"; // conceptual name; data lives in #signups-data
 
+  var SIGNUP_ENDPOINT = "https://0g8dq5hna3.execute-api.eu-central-1.amazonaws.com/signup";
+
   function readSignups() {
     try {
       var raw = document.getElementById("signups-data").textContent || "[]";
@@ -2512,20 +2527,31 @@
     (async function () {
       try {
         var artifact = (window.claude && window.claude.use) ? await window.claude.use("artifact") : null;
-        if (!artifact) {
-          showFallback(data);
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Create your account";
+        if (artifact) {
+          var current = readSignups();
+          current.push(entry);
+          var html = buildFullPage(current);
+          try {
+            sessionStorage.setItem("neoacct_justSignedUp", "1");
+          } catch (e) { /* ignore */ }
+          await artifact.publish(html);
+          // On success this view reloads automatically; nothing further to do here.
           return;
         }
-        var current = readSignups();
-        current.push(entry);
-        var html = buildFullPage(current);
-        try {
-          sessionStorage.setItem("neoacct_justSignedUp", "1");
-        } catch (e) { /* ignore */ }
-        await artifact.publish(html);
-        // On success this view reloads automatically; nothing further to do here.
+        // Not running inside the Claude Artifact runtime (e.g. the AWS-hosted
+        // copy of this page) — email the signup via the API Gateway + Lambda
+        // + SES endpoint instead. window.claude does not exist on Amplify, so
+        // this is the path every real visitor takes.
+        var res = await fetch(SIGNUP_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error("Request failed");
+        form.reset();
+        showStatus("ok", "Thanks — we've received your details and will be in touch shortly.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Create your account";
       } catch (err) {
         try { sessionStorage.removeItem("neoacct_justSignedUp"); } catch (e) {}
         showFallback(data);
